@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Johari Window Questionnaire - Apollo Pharmacy</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+:root{--teal:#3F9A94;--deep:#17504C;--orange:#F15A29;--amber:#FBB731;--slate:#5B6B8C;--paper:#F4F8F7;--ink:#16302E;--mute:#5E7371;--line:#D3E2E0}
+*{box-sizing:border-box}
+body{margin:0;font:16px/1.55 Manrope,system-ui,sans-serif;color:var(--ink);background:var(--paper)}
+.wrap{max-width:820px;margin:0 auto;padding:0 16px}
+header{background:#fff;border-bottom:4px solid var(--teal);padding:12px 0}
+header .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+header img{height:50px;max-width:100%}
+.steps{display:flex;gap:6px;font-size:13px;font-weight:600;color:var(--mute)}
+.steps span{padding:4px 11px;border-radius:99px;background:#E6EFEE}
+.steps .on{background:var(--deep);color:#fff}
+h1{font-size:clamp(26px,5vw,38px);line-height:1.15;margin:28px 0 6px;color:var(--deep);font-weight:800}
+h2{margin:0 0 14px;font-size:20px;color:var(--deep)}
+.lead{color:var(--mute);margin:0 0 22px}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:22px;margin-bottom:16px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:600px){.grid{grid-template-columns:1fr}}
+label{display:block;font-weight:600;font-size:14px;margin-bottom:5px}
+input{width:100%;padding:11px 12px;border:1.5px solid var(--line);border-radius:9px;font:inherit;background:#fff;color:var(--ink)}
+input:focus,button:focus-visible{outline:3px solid var(--amber);outline-offset:1px}
+.btn{background:var(--orange);color:#fff;border:0;border-radius:10px;padding:13px 26px;font:800 16px Manrope,sans-serif;cursor:pointer}
+.btn:hover{background:#d94a1a}
+.btn.alt{background:var(--deep)}
+.btn.ghost{background:#fff;color:var(--deep);border:1.5px solid var(--deep)}
+.hide{display:none!important}
+.how{background:#E9F4F2;border-left:5px solid var(--teal)}
+.how p{margin:6px 0}
+.bar{position:sticky;top:0;z-index:5;background:var(--paper);padding:10px 0 8px;font-size:14px;font-weight:600;color:var(--mute)}
+.track{height:8px;background:#DCE8E6;border-radius:9px;overflow:hidden;margin-top:5px}
+.track i{display:block;height:100%;width:0;background:var(--orange);transition:width .25s}
+.q.miss{border-color:var(--orange);box-shadow:0 0 0 3px #F15A2933}
+.q h3{margin:0 0 12px;font-size:16px;font-weight:600}
+.q h3 b{color:var(--orange);margin-right:6px}
+.st{display:flex;gap:10px;padding:9px 11px;border-radius:9px;background:var(--paper);margin-bottom:8px;font-size:15px}
+.st em{font-style:normal;font-weight:800;color:var(--deep);min-width:64px}
+.pills{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-top:10px}
+.pills button{border:1.5px solid var(--line);background:#fff;border-radius:9px;padding:6px 0;font:600 12px/1.35 Manrope,sans-serif;color:var(--mute);cursor:pointer}
+.pills button b{display:block;font-size:13px;color:var(--ink)}
+.pills button.sel{background:var(--deep);border-color:var(--deep);color:#cfe6e3}
+.pills button.sel b{color:#fff}
+.msg{color:var(--orange);font-weight:600;min-height:24px;margin:8px 0}
+.win{position:relative;margin:34px 0 34px 34px}
+.quad{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:4px;aspect-ratio:1;max-height:520px;position:relative}
+.quad div{padding:14px;font-weight:800;font-size:clamp(17px,4vw,24px);opacity:.25;transition:opacity .6s}
+.quad div small{display:block;font-weight:600;font-size:12px;margin-top:2px}
+.quad .act{opacity:1}
+.dot{position:absolute;width:28px;height:28px;margin:-14px 0 0 -14px;border-radius:50%;background:#fff;border:7px solid var(--ink);animation:pulse 1.8s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 #16302E66}80%,100%{box-shadow:0 0 0 18px #16302E00}}
+.xl{position:absolute;top:-26px;left:0;right:0;display:flex;justify-content:space-between;font-size:12px;font-weight:600;color:var(--mute)}
+.yl{position:absolute;left:-28px;top:0;bottom:0;writing-mode:vertical-rl;transform:rotate(180deg);display:flex;justify-content:space-between;font-size:12px;font-weight:600;color:var(--mute)}
+.res h2{font-size:clamp(24px,5vw,34px);margin:0 0 8px}
+.meter{margin:12px 0}
+.meter div{display:flex;justify-content:space-between;font-weight:600;font-size:14px}
+.meter .t{height:10px;background:#DCE8E6;border-radius:9px;overflow:hidden}
+.meter .t i{display:block;height:100%;background:var(--teal)}
+.who{color:var(--mute);font-size:14px;margin:0 0 16px}
+.tip{background:var(--paper);border-radius:10px;padding:12px 14px;margin-top:12px}
+footer{text-align:center;color:var(--mute);font-size:13px;padding:24px 0 40px}
+footer button{background:none;border:0;color:var(--deep);font:600 13px Manrope,sans-serif;text-decoration:underline;cursor:pointer}
+dialog{border:0;border-radius:14px;padding:24px;width:min(940px,96vw);max-height:92vh}
+dialog::backdrop{background:#16302E88}
+dialog .btn{margin:8px 8px 0 0;padding:10px 18px;font-size:14px}
+@media(prefers-reduced-motion:reduce){.dot{animation:none}*{transition:none!important}}
+.det h3{margin:18px 0 6px;font-size:16px;color:var(--deep)}
+.det ul,.det ol{margin:0;padding-left:20px}
+.det li{margin:3px 0}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:600px){.two{grid-template-columns:1fr}}
+.note{background:#FFF4E0;border-left:5px solid var(--amber);padding:10px 12px;border-radius:8px}
+.chip{display:inline-block;padding:3px 12px;border-radius:99px;font-size:13px;font-weight:800;margin:0 6px 8px 0}
+.tw{overflow-x:auto;max-height:300px;overflow-y:auto;margin:10px 0;border:1px solid var(--line);border-radius:9px}
+table{border-collapse:collapse;width:100%;font-size:13px;white-space:nowrap}
+th,td{padding:6px 10px;text-align:left;border-bottom:1px solid var(--line)}
+th{position:sticky;top:0;background:var(--paper)}
+#login{max-width:340px}
+@media print{.steps,footer,.btn,#adminLink{display:none!important}*{-webkit-print-color-adjust:exact;print-color-adjust:exact}.dot{animation:none}}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <img src="data:image/png;base64,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" alt="Apollo Pharmacy and Apollo 24/7">
+  <div class="steps"><span class="on">1 Your details</span><span>2 Questions</span><span>3 Your result</span></div>
+</div></header>
+
+<main class="wrap">
+<h1>Johari Window Questionnaire</h1>
+<p class="lead">Find out how you give and receive feedback at work. It takes about 10 minutes.</p>
+
+<section id="v1" class="card">
+  <h2>Tell us about you</h2>
+  <form id="f">
+    <div class="grid">
+      <div><label for="name">Full name</label><input id="name" required autocomplete="name"></div>
+      <div><label for="empId">Employee ID</label><input id="empId" required></div>
+      <div><label for="branch">Branch</label><input id="branch" required></div>
+      <div><label for="region">Region</label><input id="region" required></div>
+      <div><label for="manager">Manager</label><input id="manager" required></div>
+      <div><label for="dgm">DGM</label><input id="dgm" required></div>
+    </div>
+    <p><button class="btn" type="submit">Start the questionnaire</button></p>
+  </form>
+</section>
+
+<section id="v2" class="hide">
+  <div class="card how">
+    <h2>How to answer</h2>
+    <p>Each situation has two statements, A and B. Split <b>5 points</b> between them.</p>
+    <p>If A is exactly what you would do, choose A 5 / B 0. If A is not perfect but better than B, choose A 4 / B 1 or A 3 / B 2. If B is better, do the reverse. There are no right or wrong answers.</p>
+  </div>
+  <div class="bar"><span id="cnt">0 of 20 answered</span><div class="track"><i id="prog"></i></div></div>
+  <div id="qs"></div>
+  <p class="msg" id="err"></p>
+  <p><button class="btn" id="done" type="button">See my result</button></p>
+</section>
+
+<section id="v3" class="hide res">
+  <div class="card">
+    <p class="who" id="who"></p>
+    <p class="who" id="sync"></p>
+    <div id="head"></div>
+    <div class="win">
+      <div class="xl"><span>High</span><span>Solicits feedback</span><span>Low</span></div>
+      <div class="yl"><span>Low</span><span>Gives feedback / self-discloses</span><span>High</span></div>
+      <div class="quad" id="quad"></div>
+    </div>
+    <div class="meter"><div><span>Solicits feedback</span><span id="s1"></span></div><div class="t"><i id="b1"></i></div></div>
+    <div class="meter"><div><span>Gives feedback / self-discloses</span><span id="s2"></span></div><div class="t"><i id="b2"></i></div></div>
+    <div class="tip" id="tip"></div>
+    <div class="det" id="det"></div>
+  </div>
+  <p><button class="btn alt" onclick="window.print()">Print / save my result as PDF</button> <button class="btn ghost" onclick="location.reload()">Start a new response</button></p>
+  <p class="who">Upload not confirmed? Send your result code to your trainer:</p>
+  <p><button class="btn ghost" id="copyCode" type="button">Copy my result code</button> <button class="btn ghost" id="waBtn" type="button">Send on WhatsApp</button></p>
+</section>
+</main>
+
+<footer>Apollo Pharmacy Training &nbsp;|&nbsp; <button id="adminLink" type="button">Admin login</button></footer>
+
+<dialog id="adm">
+  <form id="login" method="dialog" onsubmit="return false">
+    <h2>Admin login</h2>
+    <label for="pw">Password</label><input id="pw" type="password" autocomplete="off">
+    <p class="msg" id="pwErr"></p>
+    <button class="btn alt" id="go" type="button">Log in</button><button class="btn ghost" type="button" onclick="$('#adm').close()">Cancel</button>
+  </form>
+  <div id="panel" class="hide">
+    <h2>Responses</h2>
+    <p id="count"></p><div id="chips"></div><input id="srch" placeholder="Search name, ID, branch, region, manager or DGM"><div class="tw"><table id="tbl"></table></div>
+    <button class="btn" id="xl" type="button">Download Excel</button>
+    <button class="btn alt hide" id="pull" type="button">Pull from cloud sheet</button>
+    <button class="btn ghost" id="clr" type="button">Clear data</button>
+    <button class="btn ghost" type="button" onclick="$('#adm').close()">Close</button>
+    <button class="btn ghost" id="tst" type="button">Test cloud connection</button>
+    <details><summary>Import result codes (backup method)</summary><textarea id="imp" rows="4" style="width:100%;margin-top:8px" placeholder="Paste result codes here, one per line"></textarea><button class="btn alt" id="impGo" type="button">Import</button></details>
+    <p class="msg" id="pmsg"></p>
+  </div>
+</dialog>
+
+<script>
+/* ---- Settings: change these before sharing ---- */
+const ADMIN_PASSWORD = 'Apollo@2026';
+const SYNC_URL = 'https://script.google.com/macros/s/AKfycbyyyAjFFrOPE8xfGrvhB81ZI26BLYUuOK09awlmsvpdtT-81x_Ug1hnsGzyPnAbV1v_Jw/exec';            // optional Google Apps Script web app URL (see apps_script.gs)
+const KEY = 'apollo_johari_v1';
+
+/* [situation, statement A, statement B, scale (s = solicits feedback, d = self-disclosure), scored letter] */
+const Q = [
+["If a friend of mine had a “personality conflict” with a mutual acquaintance of ours with whom it was important for him/her to get along, I would:","Tell my friend that I felt s/he was partially responsible for any problems with this other person and try to let him/her know how the person was being affected by him/her.","Not get involved because I wouldn't be able to continue to get along with both of them once I had entered in any way.","d","A"],
+["If one of my friends and I had a heated argument in the past and I realized that s/he was ill at ease around me from that time on, I would:","Avoid making things worse by discussing his/her behaviour and just let the whole thing drop.","Bring up his/her behavior and ask him/her how s/he felt the argument had affected our relationship.","s","B"],
+["If a friend began to avoid me and act in an aloof and withdrawn manner, I would:","Tell him/her about his/her behavior and suggest that s/he tell me what was on his/her mind.","Follow his/her lead and keep our contact brief and aloof since that seems to be what s/he wants.","s","A"],
+["If two of my friends and I were talking and one of my friends slipped and brought up a personal problem of mine that involved the other friend, of which s/he was not yet aware, I would:","Change the subject and signal my friend to do the same.","Fill my uninformed friend in on what the other friend was talking about and suggest that we go into it later.","d","B"],
+["If a friend of mine were to tell me that in his/her opinion, I was doing things that made me less effective than I might be in social situations, I would:","Ask him/her to spell out or describe what s/he has observed and suggest changes I might make.","Resent his/her criticism and let him/her know why I behave the way I do.","s","A"],
+["If one of my friends aspired to an office in our organization for which I felt s/he was unqualified, and if s/he had been tentatively assigned to that position by the leader of our group, I would:","Not mention my misgivings to either my friend or the leader of our group and let them handle it in their own way.","Tell my friend and the leader of our group of my misgivings and then leave the final decision up to them.","d","B"],
+["If I felt that one of my friends was being unfair to me and his/her other friends, but none of them had mentioned anything about it, I would:","Ask several of these people how they perceived the situation to see if they felt s/he was being unfair.","Not ask the others how they perceived our friend, but wait for them to bring it up with me.","s","A"],
+["If I were preoccupied with some personal matters and a friend told me that I had become irritated with him/her and others and that I was jumping on him/her for unimportant things, I would:","Tell him/her I was preoccupied and would probably be on edge for a while and would prefer not to be bothered.","Listen to his/her complaints but not try to explain my actions to him/her.","s","B"],
+["If I had heard some friends discussing an ugly rumor about a friend of mine which I knew could hurt him/her and s/he asked me what I knew about it, if anything, I would:","Say I didn't know anything about it and tell him/her no one would believe a rumor like that anyway.","Tell him/her exactly what I had heard, when I had heard it, and from whom I had heard it.","d","B"],
+["If a friend pointed out the fact that I had a personality conflict with another friend with whom it was important for me to get along, I would:","Consider his/her comments out of line and tell him/her I didn't want to discuss the matter any further.","Talk about it openly with him/her to find out how my behavior was being affected by this.","s","B"],
+["If my relationship with a friend has been damaged by repeated arguments on an issue of importance to us both, I would:","Be cautious in my conversations with him/her so the issue would not come up again to worsen our relationship.","Point to the problems the controversy was causing in our relationship and suggest that we discuss it until we get it resolved.","d","B"],
+["If in a personal discussion with a friend about his/her problems and behavior s/he suddenly suggested we discuss my problems and behavior as well as his/her own, I would:","Try to keep the discussion away from me by suggesting that other, closer friends often talked to me about such matters.","Welcome the opportunity to hear what s/he felt about me and encourage his/her comments.","s","B"],
+["If a friend of mine began to tell me about his/her hostile feelings about another friend whom s/he felt was being unkind to others (and I agreed wholeheartedly), I would:","Listen and also express my own feelings to him/her so s/he would know where I stood.","Listen, but not express my own negative views and opinions because s/he might repeat what I said to him/her in confidence.","d","A"],
+["If I thought an ugly rumor was being spread about me and suspected that one of my friends had quite likely heard it, I would:","Avoid mentioning the issue and leave it to him/her to tell me about it if s/he wanted to.","Risk putting him/her on the spot by asking him/her directly what s/he knew about the whole thing.","s","B"],
+["If I had observed a friend in social situations and thought that s/he was doing a number of things which hurt his/her relationships, I would:","Risk being seen as a busy body and tell him/her what I had observed and my reactions to it.","Keep my opinion to myself rather than be seen as interfering in things that are none of my business.","d","A"],
+["If two friends and I were talking and one of them inadvertently mentioned a personal problem which involved me, but of which I knew nothing, I would:","Press them for information about the problem and their opinions about it.","Leave it up to my friends to tell me or not tell me, letting them change the subject if they wished.","s","A"],
+["If a friend seemed to be preoccupied and began to jump on me for seemingly important things, and became irritated with me and others without real cause, I would:","Treat him/her with kid gloves for a while on the assumption that s/he was having some temporary personal problems which were none of my business.","Try to talk to him/her about it and point out to him/her how his/her behavior was affecting people.","d","B"],
+["If I had begun to dislike certain habits of a friend to the point that it was interfering with my enjoying his/her company, I would:","Say nothing to him/her directly, but let him/her know my feelings by ignoring him/her whenever his/her annoying habits were obvious.","Get my feelings out in the open and clear the air so that we could continue our friendship comfortably and enjoyably.","d","B"],
+["In discussing social behavior with one of my more sensitive friends, I would:","Avoid mentioning his/her flaws and weaknesses so as not to hurt his/her feelings.","Focus on his/her flaws and weaknesses so s/he could improve his/her interpersonal skills.","d","B"],
+["If I knew I might be assigned to an important position in our group and my friends' attitudes toward me had become rather negative, I would:","Discuss my shortcomings with my friends so I could see where to improve.","Try to figure out my own shortcomings by myself so I could improve.","s","A"]
+];
+const CAT = {
+ open:{n:'Open',c:'#3F9A94',t:'#fff',s:'Known to you and to others',
+  d:'You ask for feedback and you share openly about yourself. Others know where you stand and you know how you come across. This is the zone of trust and strong teamwork.',
+  tip:'Keep going: keep inviting honest input and keep sharing what you know with your team.'},
+ blind:{n:'Blind',c:'#F15A29',t:'#fff',s:'Known to others, not to you',
+  d:'You share freely, but you seldom ask how you come across. Others may see habits and strengths in you that you cannot see yourself.',
+  tip:'Try this: each week, ask one trusted colleague what one thing you do helps the team and what one thing gets in the way.'},
+ hidden:{n:'Hidden',c:'#FBB731',t:'#16302E',s:'Known to you, not to others',
+  d:'You welcome feedback, but you keep much about yourself private. Teammates often have to guess your views, feelings and ideas.',
+  tip:'Try this: share a little more, such as your opinion in a meeting or a concern before it grows, so others can work with you better.'},
+ unknown:{n:'Unknown',c:'#5B6B8C',t:'#fff',s:'Not yet known to anyone',
+  d:'You neither share much nor ask for feedback, so a lot about you is still unseen, by you and by others.',
+  tip:'Start small: share one thought in your next team meeting and ask one person for their honest view of how you work.'}
+};
+const DET = {
+ open:{str:["Builds trust quickly because people know where they stand with you","Corrects course early by acting on honest feedback","Helps the team talk openly about problems"],
+  watch:["Sharing so much that others feel overwhelmed","Assuming everyone is as comfortable with openness as you are"],
+  steps:["Mentor a colleague who finds feedback hard","Keep asking for feedback after new roles or responsibilities","Make sure quieter team members get a chance to speak"]},
+ blind:{str:["Confident and direct, so people hear your views","Quick to speak up on issues others avoid"],
+  watch:["Missing the effect your words and habits have on others","Being surprised by feedback others have held back for a long time"],
+  steps:["Ask two colleagues each month what you should do more or less of","After a meeting, ask how your point landed","Listen to feedback fully before explaining yourself"]},
+ hidden:{str:["Thoughtful and open to learning","Careful with what you say, so people trust your discretion"],
+  watch:["Others may read your silence as disinterest or disagreement","Your ideas and concerns may reach the team too late"],
+  steps:["Share one opinion or idea in every team meeting","Tell your manager early when something worries you","Give feedback in return when you receive it"]},
+ unknown:{str:["Reserved and independent","Less likely to get drawn into conflict"],
+  watch:["Others know little about your strengths, so opportunities may pass you by","Blind spots stay hidden because nobody tells you about them"],
+  steps:["Pick one trusted colleague and ask for honest feedback this month","Share one work detail you usually keep back","Build the habit slowly: one feedback conversation a week"]}
+};
+const LV = {
+ s:{low:"You rarely invite others to tell you how you come across.",moderate:"You sometimes ask for feedback, depending on the situation or the person.",high:"You actively ask others how you come across and listen to the answer."},
+ d:{low:"You tend to keep your reactions, concerns and observations to yourself.",moderate:"You share some of your views and reactions but hold back in sensitive situations.",high:"You readily share your reactions, observations and feelings with others."}
+};
+const catOf = (s, d) => s >= 25 ? (d >= 25 ? 'open' : 'hidden') : (d >= 25 ? 'blind' : 'unknown');
+const $ = s => document.querySelector(s);
+const ans = Array(Q.length).fill(null);
+let me = {}, lastRec;
+const getAll = () => { try { return JSON.parse(localStorage.getItem(KEY)) || []; } catch (e) { return []; } };
+const saveAll = a => { try { localStorage.setItem(KEY, JSON.stringify(a)); } catch (e) {} };
+const step = n => document.querySelectorAll('.steps span').forEach((e, i) => e.classList.toggle('on', i == n - 1));
+const show = id => { ['v1','v2','v3'].forEach(v => $('#' + v).classList.toggle('hide', v != id)); window.scrollTo(0, 0); };
+
+$('#qs').innerHTML = Q.map((q, i) => `<section class="card q" id="q${i}"><h3><b>${i + 1}.</b>${q[0]}</h3>
+<div class="st"><em>A <span id="a${i}"></span></em><span>${q[1]}</span></div>
+<div class="st"><em>B <span id="b${i}"></span></em><span>${q[2]}</span></div>
+<div class="pills" data-i="${i}">${[5,4,3,2,1,0].map(a => `<button type="button" data-a="${a}"><b>A ${a}</b>B ${5 - a}</button>`).join('')}</div></section>`).join('');
+
+$('#qs').onclick = e => {
+  const b = e.target.closest('button[data-a]'); if (!b) return;
+  const i = +b.parentNode.dataset.i, a = +b.dataset.a; ans[i] = a;
+  b.parentNode.querySelectorAll('button').forEach(x => x.classList.toggle('sel', x === b));
+  $('#a' + i).textContent = a + (a == 1 ? ' pt' : ' pts');
+  $('#b' + i).textContent = (5 - a) + (5 - a == 1 ? ' pt' : ' pts');
+  $('#q' + i).classList.remove('miss'); $('#err').textContent = '';
+  const n = ans.filter(x => x !== null).length;
+  $('#cnt').textContent = n + ' of ' + Q.length + ' answered';
+  $('#prog').style.width = (n / Q.length * 100) + '%';
+};
+
+$('#f').onsubmit = e => {
+  e.preventDefault();
+  ['name','empId','branch','manager','dgm','region'].forEach(k => me[k] = $('#' + k).value.trim());
+  step(2); show('v2');
+};
+
+$('#done').onclick = () => {
+  const miss = ans.map((a, i) => a === null ? i : -1).filter(i => i >= 0);
+  if (miss.length) {
+    miss.forEach(i => $('#q' + i).classList.add('miss'));
+    $('#err').textContent = 'Please answer all situations. ' + miss.length + ' left.';
+    $('#q' + miss[0]).scrollIntoView({behavior: 'smooth', block: 'center'});
+    return;
+  }
+  let s = 0, d = 0;
+  Q.forEach((q, i) => { const p = q[4] === 'A' ? ans[i] : 5 - ans[i]; q[3] === 's' ? s += p : d += p; });
+  const k = s >= 25 ? (d >= 25 ? 'open' : 'hidden') : (d >= 25 ? 'blind' : 'unknown');
+  const rec = Object.assign({id: Date.now() + '-' + me.empId, at: new Date().toISOString()}, me, {solicit: s, disclose: d, category: CAT[k].n, answers: ans.slice(), synced: false});
+  const all = getAll(); all.push(rec); saveAll(all);
+  lastRec = rec; $('#sync').textContent = SYNC_URL ? 'Uploading your response...' : '';
+  syncPending().then(() => { const r = getAll().find(x => x.id === rec.id);
+    $('#sync').textContent = !SYNC_URL ? 'Your response is saved on this device.' : (r && r.synced ? 'Your response reached the central sheet.' : 'Saved on this device, but the upload could not be confirmed. Please send your result code to your trainer.'); });
+  showResult(k, s, d); step(3); show('v3');
+};
+
+function showResult(k, s, d) {
+  const c = CAT[k];
+  $('#who').textContent = me.name + ', Employee ID ' + me.empId + ', ' + me.branch + ' (' + me.region + ')';
+  $('#head').innerHTML = `<h2 style="color:${k == 'hidden' ? '#8a5b00' : c.c}">You are in the ${c.n} window</h2><p>${c.d}</p>`;
+  $('#quad').innerHTML = ['open','blind','hidden','unknown'].map(x =>
+    `<div class="${x == k ? 'act' : ''}" style="background:${CAT[x].c};color:${CAT[x].t}">${CAT[x].n}<small>${CAT[x].s}</small></div>`).join('');
+  const dot = document.createElement('span'); dot.className = 'dot';
+  dot.style.left = Math.min(96, Math.max(4, (50 - s) * 2)) + '%';
+  dot.style.top = Math.min(96, Math.max(4, (50 - d) * 2)) + '%';
+  $('#quad').appendChild(dot);
+  $('#s1').textContent = s + ' / 50'; $('#s2').textContent = d + ' / 50';
+  $('#b1').style.width = s * 2 + '%'; $('#b2').style.width = d * 2 + '%';
+  $('#tip').textContent = c.tip;
+  const lv = v => v >= 35 ? 'high' : v >= 15 ? 'moderate' : 'low', li = a => a.map(x => `<li>${x}</li>`).join('');
+  const near = []; if (Math.abs(s - 25) <= 3) near.push(catOf(s >= 25 ? 24 : 25, d)); if (Math.abs(d - 25) <= 3) near.push(catOf(s, d >= 25 ? 24 : 25));
+  const t = DET[k];
+  $('#det').innerHTML = `<h3>Your scores in detail</h3>
+<p><b>Solicits feedback: ${s}/50 (${lv(s)}).</b> ${LV.s[lv(s)]}</p><p><b>Gives feedback and self-discloses: ${d}/50 (${lv(d)}).</b> ${LV.d[lv(d)]}</p>`
+   + (near.length ? `<p class="note">Your score is close to the middle line (25), so you sit near the edge of the ${[...new Set(near)].map(x => CAT[x].n).join(' and ')} window. Small changes in how you act could move you across.</p>` : '')
+   + `<div class="two"><div><h3>Your strengths</h3><ul>${li(t.str)}</ul></div><div><h3>Watch out for</h3><ul>${li(t.watch)}</ul></div></div><h3>Your next steps</h3><ol>${li(t.steps)}</ol>`;
+}
+
+/* ---- Result codes (backup method) ---- */
+const enc = r => 'JOHARI:' + btoa(unescape(encodeURIComponent(JSON.stringify(r))));
+$('#copyCode').onclick = () => { const c = enc(lastRec); (navigator.clipboard ? navigator.clipboard.writeText(c) : Promise.reject()).then(() => $('#sync').textContent = 'Result code copied. Paste it into a message to your trainer.').catch(() => prompt('Copy this result code:', c)); };
+$('#waBtn').onclick = () => window.open('https://wa.me/?text=' + encodeURIComponent(enc(lastRec)));
+$('#impGo').onclick = () => {
+  const all = getAll(), ids = new Set(all.map(r => r.id)); let n = 0, bad = 0;
+  ($('#imp').value.match(/JOHARI:[A-Za-z0-9+\/=]+/g) || []).forEach(c => {
+    try {
+      const r = JSON.parse(decodeURIComponent(escape(atob(c.slice(7)))));
+      if (!r.id || !Array.isArray(r.answers) || r.answers.length != Q.length || typeof r.solicit != 'number' || typeof r.disclose != 'number' || !['Open','Blind','Hidden','Unknown'].includes(r.category)) throw 0;
+      if (!ids.has(r.id)) { ids.add(r.id); all.push(r); n++; }
+    } catch (e) { bad++; }
+  });
+  saveAll(all); count(); $('#imp').value = '';
+  $('#pmsg').textContent = n + ' imported' + (bad ? ', ' + bad + ' could not be read' : '') + '.'; if (n) syncPending();
+};
+
+/* ---- Admin ---- */
+const count = () => {
+  const all = getAll(), q = ($('#srch').value || '').toLowerCase();
+  $('#count').textContent = all.length + (all.length == 1 ? ' response' : ' responses') + (SYNC_URL ? ' (this device plus cloud sheet).' : ' stored in this browser.');
+  const cc = {Open: 0, Blind: 0, Hidden: 0, Unknown: 0}; all.forEach(r => { if (r.category in cc) cc[r.category]++; });
+  $('#chips').innerHTML = Object.keys(cc).map(k => `<span class="chip" style="background:${CAT[k.toLowerCase()].c};color:${CAT[k.toLowerCase()].t}">${k}: ${cc[k]}</span>`).join('');
+  const t = $('#tbl'); t.textContent = '';
+  const hr = t.insertRow(); ['Name','Employee ID','Branch','Region','Manager','DGM','Solicits','Discloses','Category','Date'].forEach(x => hr.appendChild(Object.assign(document.createElement('th'), {textContent: x})));
+  all.slice().reverse().filter(r => !q || [r.name, r.empId, r.branch, r.region, r.manager, r.dgm].join(' ').toLowerCase().includes(q)).forEach(r => {
+    const tr = t.insertRow();
+    [r.name, r.empId, r.branch, r.region, r.manager, r.dgm, r.solicit, r.disclose, r.category, new Date(r.at).toLocaleDateString('en-IN')].forEach(v => tr.insertCell().textContent = v);
+  });
+};
+$('#srch').oninput = count;
+const has = id => fetch(SYNC_URL + '?has=' + encodeURIComponent(id)).then(r => r.json()).then(j => j.found === true).catch(() => false);
+async function syncPending() {
+  if (!SYNC_URL || !navigator.onLine) return;
+  const done = new Set();
+  for (const r of getAll().filter(x => !x.synced)) {
+    try {
+      await fetch(SYNC_URL, {method: 'POST', mode: 'no-cors', headers: {'Content-Type': 'text/plain'}, body: JSON.stringify(r)});
+      for (let i = 0; i < 4; i++) { await new Promise(z => setTimeout(z, 1500)); if (await has(r.id)) { done.add(r.id); break; } }
+    } catch (e) { break; }
+  }
+  if (done.size) saveAll(getAll().map(x => done.has(x.id) ? Object.assign(x, {synced: true}) : x));
+}
+window.addEventListener('online', syncPending); syncPending();
+$('#adminLink').onclick = () => { $('#pw').value = ''; $('#pwErr').textContent = ''; $('#login').classList.remove('hide'); $('#panel').classList.add('hide'); $('#adm').showModal(); };
+$('#go').onclick = () => {
+  if ($('#pw').value !== ADMIN_PASSWORD) { $('#pwErr').textContent = 'Wrong password.'; return; }
+  $('#login').classList.add('hide'); $('#panel').classList.remove('hide');
+  $('#pull').classList.toggle('hide', !SYNC_URL); $('#pmsg').textContent = ''; count(); if (SYNC_URL) syncPending().then(() => $('#pull').click());
+};
+$('#pw').onkeydown = e => { if (e.key === 'Enter') $('#go').click(); };
+$('#clr').onclick = () => { if (confirm('Delete all responses stored in this browser?')) { saveAll([]); count(); } };
+$('#pull').onclick = () => {
+  $('#pmsg').textContent = 'Fetching...';
+  fetch(SYNC_URL + '?key=' + encodeURIComponent(ADMIN_PASSWORD)).then(r => r.json()).then(list => {
+    const all = getAll(), ids = new Set(all.map(r => r.id));
+    list.forEach(r => { if (!ids.has(r.id) && !r.test) all.push(Object.assign(r, {synced: true})); });
+    saveAll(all); count(); $('#pmsg').textContent = 'Cloud responses merged.';
+  }).catch(() => $('#pmsg').textContent = 'Could not reach the cloud sheet.');
+};
+$('#tst').onclick = async () => {
+  const m = t => { $('#pmsg').textContent = t; };
+  if (!SYNC_URL) return m('SYNC_URL is empty in this file. Paste your web app URL between the quotes, save, and reopen the file.');
+  if (!/\/exec$/.test(SYNC_URL)) return m('SYNC_URL must end with /exec.');
+  m('Testing...');
+  let txt;
+  try { txt = await (await fetch(SYNC_URL + '?key=' + encodeURIComponent(ADMIN_PASSWORD))).text(); }
+  catch (e) { return m('Cannot reach the script. Check that Who has access is set to Anyone, and that the URL is a web app deployment.'); }
+  let list; try { list = JSON.parse(txt); } catch (e) { return m('Google returned a web page instead of data. Set Who has access to Anyone (not only your company) and deploy a New version.'); }
+  if (list && list.error) return m('Wrong password: ADMIN_KEY in the script is different from ADMIN_PASSWORD in this file.');
+  if (!Array.isArray(list)) return m('Unexpected reply. Deploy the latest apps_script.gs as a New version.');
+  const id = 'test-' + Date.now();
+  await fetch(SYNC_URL, {method: 'POST', mode: 'no-cors', headers: {'Content-Type': 'text/plain'}, body: JSON.stringify({id, at: new Date().toISOString(), name: 'CONNECTION TEST', empId: '-', branch: '-', manager: '-', dgm: '-', region: '-', solicit: 0, disclose: 0, category: 'Unknown', answers: [], test: true})}).catch(() => {});
+  for (let i = 0; i < 4; i++) { await new Promise(z => setTimeout(z, 1500)); if (await has(id)) return m('Connection works: reading and saving both succeeded. You can delete the CONNECTION TEST row in your Sheet.'); }
+  m('Reading works but the test row was not saved. Deploy the latest apps_script.gs as a New version (Deploy > Manage deployments > pencil > New version).');
+};
+$('#xl').onclick = () => {
+  const all = getAll();
+  if (!all.length) { $('#pmsg').textContent = 'No responses to download yet.'; return; }
+  const rows = all.map(r => {
+    const o = {'Submitted at': new Date(r.at).toLocaleString('en-IN'), 'Name': r.name, 'Employee ID': r.empId, 'Branch': r.branch, 'Manager': r.manager, 'DGM': r.dgm, 'Region': r.region,
+      'Solicits feedback (0-50)': r.solicit, 'Gives feedback / self-discloses (0-50)': r.disclose, 'Johari category': r.category};
+    r.answers.forEach((a, i) => o['Q' + (i + 1) + ' (A pts)'] = a);
+    return o;
+  });
+  const fname = 'Johari_Responses_' + new Date().toISOString().slice(0, 10);
+  if (window.XLSX) {
+    const ws = XLSX.utils.json_to_sheet(rows);
+    ws['!cols'] = Object.keys(rows[0]).map((k, i) => ({wch: i < 10 ? Math.max(14, k.length + 2) : 9}));
+    const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, 'Responses');
+    const grp = (f, label) => { const m = {}; all.forEach(r => { const k = r[f] || '(blank)'; const g = m[k] = m[k] || {[label]: k, Responses: 0, Open: 0, Blind: 0, Hidden: 0, Unknown: 0, _s: 0, _d: 0}; g.Responses++; g[r.category]++; g._s += r.solicit; g._d += r.disclose; });
+      return Object.values(m).map(g => { g['Avg solicits feedback'] = +(g._s / g.Responses).toFixed(1); g['Avg self-disclosure'] = +(g._d / g.Responses).toFixed(1); delete g._s; delete g._d; return g; }); };
+    [['region','Region'],['dgm','DGM'],['manager','Manager'],['branch','Branch']].forEach(([f, l]) => XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(grp(f, l)), 'By ' + l));
+    XLSX.writeFile(wb, fname + '.xlsx');
+  } else {
+    const h = Object.keys(rows[0]), esc = v => '"' + String(v).replace(/"/g, '""') + '"';
+    const csv = [h.map(esc).join(',')].concat(rows.map(r => h.map(k => esc(r[k])).join(','))).join('\n');
+    const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], {type: 'text/csv'})); a.download = fname + '.csv'; a.click();
+    $('#pmsg').textContent = 'Excel library could not load, so a CSV was downloaded instead.';
+  }
+};
+</script>
+</body>
+</html>
